@@ -180,12 +180,21 @@ function lockTetromino() {
   // Check if any rows need to be cleared
   let rowsCleared = clearRows();
   if (rowsCleared > 0) {
-    // updateScore(rowsCleared);
+    updateScore(rowsCleared);
   }
 
   // Create a new tetromino
   // Current tetromino
   currentTetromino = randomTetromino();
+}
+
+let score = 0; // Initialize score variable
+
+//update scores
+function updateScore(rowsCleared) {
+  score += rowsCleared * 100;
+  const scoreBoard = document.getElementById("score_board");
+  scoreBoard.innerHTML = `Score: ${score}`;
 }
 
 function clearRows() {
@@ -268,7 +277,6 @@ function checkGamerOver() {
 
         // Check if any part of the tetromino has reached the top row
         if (row <= 0) {
-          console.log("Value of row is:", row);
           stopGame();
           return;
         }

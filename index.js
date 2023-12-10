@@ -77,6 +77,64 @@ function randomTetromino() {
   };
 }
 
+let heldTetromino = null;
+let canHold = true;
+function holdTetromino() {
+  if (canHold) {
+    canHold = false;
+
+    // Remove the current tetromino from the game board
+    eraseTetromino();
+
+    // If there's no held tetromino, store the current tetromino as the held one and generate a new tetromino
+    if (heldTetromino === null) {
+      heldTetromino = { ...currentTetromino };
+      currentTetromino = randomTetromino();
+    } else {
+      // Swap the current tetromino with the held one
+      const temp = { ...currentTetromino };
+      currentTetromino = { ...heldTetromino };
+      heldTetromino = { ...temp };
+    }
+
+    // Redraw the current and held tetrominos on the game and holding boards respectively
+    // clearBoard();
+    drawTetromino();
+    drawHeldTetromino();
+    updateCanHold();
+  }
+}
+
+// function to draw the being held tetromino
+function drawHeldTetromino() {
+  const heldBoard = document.getElementById("holding_board");
+  heldBoard.innerHTML = "";
+
+  if (heldTetromino !== null) {
+    const shape = heldTetromino.shape;
+    const color = heldTetromino.color;
+
+    for (let r = 0; r < shape.length; r++) {
+      for (let c = 0; c < shape[r].length; c++) {
+        if (shape[r][c]) {
+          const block = document.createElement("div");
+          block.classList.add("block");
+          block.style.backgroundColor = color;
+          block.style.top = (r + 2) * 24 + "px";
+          block.style.left = (c + 1) * 24 + "px";
+          block.setAttribute("id", `held-block-${r}-${c}`);
+          heldBoard.appendChild(block);
+        }
+      }
+    }
+  }
+}
+
+// update the canhold
+function updateCanHold() {
+  canHold = true;
+}
+
 // Current tetromino
 let currentTetromino = randomTetromino();
 let currentGhostTetromino;
@@ -369,7 +427,7 @@ function handleKeyPress(event) {
       dropTetromino();
       break;
     case 90: // z key
-      rotateTetromino();
+      holdTetromino();
     default:
       break;
   }
